@@ -1,0 +1,160 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shareable Resume Builder</title>
+
+</head>
+<link rel="stylesheet" href="style.css">
+<body>
+
+    <h1>Shareable Resume Builder</h1>
+
+    <!-- Resume Form -->
+    <form id="resume-form">
+        <fieldset>
+            <legend>Personal Information</legend>
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username" required>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <label for="phone">Phone No:</label>
+            <input type="tel" id="phone" placeholder="Enter your phone number" required>
+        </fieldset>
+
+        <!-- Education Section -->
+        <fieldset>
+            <legend>Education</legend>
+            <label for="education">Education:</label>
+            <textarea id="education" placeholder="Enter your education" rows="4" required></textarea>
+        </fieldset>
+
+        <!-- Experience Section -->
+        <fieldset>
+            <legend>Experience</legend>
+            <label for="experience">Experience:</label>
+            <textarea id="experience" placeholder="Enter your work experience" rows="4" required></textarea>
+        </fieldset>
+
+        <!-- Skills Section -->
+        <fieldset>
+            <legend>Skills</legend>
+            <label for="skills">Skills:</label>
+            <textarea id="skills" placeholder="Enter your skills" rows="4" required></textarea>
+        </fieldset>
+
+        <!-- Submit Button -->
+        <button type="submit">Generate Resume</button>
+    </form>
+
+    <!-- Resume Display Area -->
+    <div id="resume-display">
+        <h2>Generated Resume</h2>
+        <h3>Personal Information</h3>
+        <p><b>Name:</b> <span id="resume-name"></span></p>
+        <p><b>Email:</b> <span id="resume-email"></span></p>
+        <p><b>Phone:</b> <span id="resume-phone"></span></p>
+
+        <h3>Education</h3>
+        <p id="resume-education"></p>
+
+        <h3>Experience</h3>
+        <p id="resume-experience"></p>
+
+        <h3>Skills</h3>
+        <p id="resume-skills"></p>
+
+        <!-- Shareable Link Section -->
+        <div id="shareable-link-container">
+            <h2>Shareable Link</h2>
+            <p>Share this link to view or edit your resume:</p>
+            <a href="#" id="shareable-link" target="_blank">Share your resume</a>
+            <br><br>
+            <button id="download-pdf">Download as PDF</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('resume-form');
+        const resumeDisplayElement = document.getElementById('resume-display');
+        const shareableLinkContainer = document.getElementById('shareable-link-container');
+        const shareableLinkElement = document.getElementById('shareable-link');
+        const downloadPdfButton = document.getElementById('download-pdf');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Collect form data
+            const username = document.getElementById('username').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const education = document.getElementById('education').value;
+            const experience = document.getElementById('experience').value;
+            const skills = document.getElementById('skills').value;
+
+            // Save form data in localStorage
+            const resumeData = {
+                name,
+                email,
+                phone,
+                education,
+                experience,
+                skills
+            };
+            localStorage.setItem(username, JSON.stringify(resumeData));
+
+            // Generate the resume content dynamically
+            document.getElementById('resume-name').textContent = name;
+            document.getElementById('resume-email').textContent = email;
+            document.getElementById('resume-phone').textContent = phone;
+            document.getElementById('resume-education').textContent = education;
+            document.getElementById('resume-experience').textContent = experience;
+            document.getElementById('resume-skills').textContent = skills;
+
+            // Display the resume
+            resumeDisplayElement.style.display = 'block';
+
+            // Generate the shareable URL
+            const shareableURL = `${window.location.origin}?username=${encodeURIComponent(username)}`;
+            shareableLinkContainer.style.display = 'block';
+            shareableLinkElement.href = shareableURL;
+            shareableLinkElement.textContent = shareableURL;
+        });
+
+        // Handle PDF download
+        downloadPdfButton.addEventListener('click', () => {
+            window.print(); // Open the print dialog to save the resume as PDF
+        });
+
+        // Prefill form if username exists in URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+            if (username) {
+                const savedResumeData = localStorage.getItem(username);
+                if (savedResumeData) {
+                    const resumeData = JSON.parse(savedResumeData);
+                    document.getElementById('username').value = username;
+                    document.getElementById('name').value = resumeData.name;
+                    document.getElementById('email').value = resumeData.email;
+                    document.getElementById('phone').value = resumeData.phone;
+                    document.getElementById('education').value = resumeData.education;
+                    document.getElementById('experience').value = resumeData.experience;
+                    document.getElementById('skills').value = resumeData.skills;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
+
